@@ -1,0 +1,38 @@
+#!/bin/bash
+# JOB NAME
+#SBATCH --job-name=Complex_Restr
+#
+# NODE SPECIFIED
+#SBATCH --nodelist=nodo05
+#
+#SBATCH --no-requeue
+#SBATCH -e error_%j.err
+#SBATCH -o output_%j.out
+#SBATCH -p gpu
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 1
+#SBATCH --mem=8G
+#SBATCH -t 9999:00:00
+#SBATCH -G 1
+export HomeDir=$PWD
+#activate_spack
+source /usr/local/spack/share/spack/setup-env.sh
+spack load amber@20
+
+# Configuration variables
+#   * Initial scratch directory
+Amber_SCRDIR="/scratch-hermida"
+###[ -d "/scratch2" ] && Amber_SCRDIR="/scratch2"
+
+export Amber_SCRDIR="${Amber_SCRDIR}/MICELL/Complex/Restrict"
+
+# Creation of scratch directory:
+###mkdir -p "${Amber_SCRDIR}"
+
+
+cd $HomeDir
+
+pmemd.cuda -O -i md_restr.in -o md_restr.out -p Toco+Ciclo_Oct_23A.prmtop  -c  init_47856.rst -r "${Amber_SCRDIR}"/md_restr.rst -ref init_47856.rst -x "${Amber_SCRDIR}"/md_restr.nc  -AllowSmallBox
+
+mv "${Amber_SCRDIR}"/*.rst  $HomeDir

@@ -1,0 +1,43 @@
+#!/bin/bash
+# JOB NAME
+#SBATCH --job-name=Complex
+#
+# NODE SPECIFIED
+#SBATCH --nodelist=nodo05
+#
+#SBATCH --no-requeue
+#SBATCH -e error_%j.err
+#SBATCH -o output_%j.out
+#SBATCH -p gpu
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 1
+#SBATCH --mem=8G
+#SBATCH -t 9999:00:00
+#SBATCH -G 1
+export HomeDir=$PWD
+#activate_spack
+source /usr/local/spack/share/spack/setup-env.sh
+spack load amber@20
+
+# Configuration variables
+#   * Initial scratch directory
+Amber_SCRDIR="/scratch-hermida"
+###[ -d "/scratch2" ] && Amber_SCRDIR="/scratch2"
+
+export Amber_SCRDIR="${Amber_SCRDIR}/MICELL/Complex"
+
+# Creation of scratch directory:
+###mkdir -p "${Amber_SCRDIR}"
+
+
+cd $HomeDir
+#pmemd.cuda -O -i min.in -o min.out -p Dim_Opt_Oct_23A.prmtop  -c Dim_Opt_Oct_23A.inpcrd  -r min.rst -x min.nc
+
+#pmemd.cuda -O -i heat.in -o heat.out -p Dim_Opt_Oct_23A.prmtop  -c min.rst -r heat.rst -x "${Amber_SCRDIR}"/heat.nc   -AllowSmallBox
+
+#pmemd.cuda -O -i md_eq.in -o md_eq.out -p Dim_Opt_Oct_23A.prmtop  -c heat.rst -r "${Amber_SCRDIR}"/md_eq.rst -ref heat.rst -x "${Amber_SCRDIR}"/md_eq.nc   -AllowSmallBox
+
+pmemd.cuda -O -i md_prod.in -o md_prod.out -p Dim_Opt_Oct_23A.prmtop  -c md_eq.rst -r "${Amber_SCRDIR}"/md_prod.rst -ref md_eq.rst -x "${Amber_SCRDIR}"/md_prod.nc  -AllowSmallBox
+
+mv "${Amber_SCRDIR}"/*.rst  $HomeDir

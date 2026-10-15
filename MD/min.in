@@ -1,0 +1,12 @@
+initial minimization
+ &cntrl
+  imin   = 1,        ! Minimization
+  maxcyc = 2000000,     ! Maximum number of steps for minimization
+  ntb    = 1,        ! Periodic Boundary Conditions in the NVT ensemble
+  cut    = 12.0      ! Cutoff for Lennard-Jones and real-space Ewald interactions
+  ntxo   = 2        ! Binary format for final coordinates, velocities and box size
+  ioutfm = 1        ! Binary format for trajectory (xyz) file
+  iwrap         = 1        ! Solvent molecules are wrapped into the primary box
+ 
+ /
+
